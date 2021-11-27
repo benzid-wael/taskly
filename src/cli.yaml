@@ -1,0 +1,65 @@
+name: taskly
+author: Wael Ben Zid <benzid.wael@hotmail.fr>
+about: 📓 Manage your tasks and notes from the command line
+args:
+    - workspace:
+        short: w
+        long: workspace
+        value_name: WORKSPACE
+        takes_value: true
+        about: Sets a custom workspace
+    - verbose:
+        short: v
+        multiple_occurrences: true
+        about: Sets the level of verbosity
+subcommands:
+    - timeline:
+        about: Displays timeline view
+    - board:
+        about: Displays board view
+    - task:
+        about: Manage tasks
+        alias: t
+        subcommands:
+            - create:
+                about: Creates a task
+                alias: c
+                args:
+                    - title:
+                        required: true
+                        takes_value: true
+                        about: Sets the title
+                    - description:
+                        short: d
+                        long: description
+                        takes_value: true
+                        about: Sets the description
+                    - tags:
+                        short: t
+                        long: tags
+                        takes_value: true
+                        multiple_occurrences: true
+                        about: Adds a tag
+            - edit:
+                about: Edit tasks
+                alias: e
+                args:
+                    - id:
+                        required: true
+                        takes_value: true
+                        about: Select task with given ID
+                    - title:
+                        long: title
+                        takes_value: true
+                        about: Sets the title
+                    - description:
+                        short: d
+                        long: description
+                        takes_value: true
+                        about: Sets the description
+                    - tags:
+                        short: t
+                        long: tags
+                        takes_value: true
+                        multiple_occurrences: true
+                        about: Adds a tag
