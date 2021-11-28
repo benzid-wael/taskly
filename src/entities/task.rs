@@ -1,8 +1,9 @@
 use std::time::SystemTime;
 
-use super::item::{Starrable, Taggable};
+use super::item::{Manageable, Starrable, Taggable};
 
 
+#[derive(Clone)]
 #[derive(Debug)]
 pub enum Status {
     Todo,
@@ -16,19 +17,19 @@ pub enum Status {
 pub trait FSM {
     fn _update_status(&mut self, status: Status);
 
-    fn start(&mut self) {
+    fn start_task(&mut self) {
         self._update_status(Status::InProgress);
     }
 
-    fn stop(&mut self) {
+    fn stop_task(&mut self) {
         self._update_status(Status::OnHold);
     }
 
-    fn complete(&mut self) {
+    fn complete_task(&mut self) {
         self._update_status(Status::Done);
     }
 
-    fn cancel(&mut self) {
+    fn cancel_task(&mut self) {
         self._update_status(Status::Cancelled);
     }
 }
@@ -58,6 +59,36 @@ impl Task {
             tags,
         }
     }
+
+}
+
+impl Manageable for Task {
+    /* Getters */
+    fn id(&self) -> u64 {
+        self.id.clone()
+    }
+
+    fn title(&self) -> String {
+        self.title.clone()
+    }
+
+    fn description(&self) -> String {
+        self.description.clone()
+    }
+
+    fn created_at(&self) -> SystemTime {
+        self.created_at.clone()
+    }
+
+    /* Setters */
+
+    fn set_title(&mut self, title: String) {
+        self.title = title
+    }
+
+    fn set_description(&mut self, description: String) {
+        self.description = description;
+    }
 }
 
 impl Starrable for Task {
@@ -72,15 +103,15 @@ impl Starrable for Task {
     }
 }
 
-// impl Taggable for Task {
-//     fn add_tag(&mut self, tag: String) {
-//         self.tags.push(tag);
-//     }
+impl Taggable for Task {
+    fn add_tag(&mut self, tag: String) {
+        self.tags.push(tag);
+    }
 
-//     fn remove_tag(&mut self, tag: String) {
-//         self.tags.retain(|t| t != &tag);
-//     }
-// }
+    fn remove_tag(&mut self, tag: String) {
+        self.tags.retain(|t| t != &tag);
+    }
+}
 
 impl FSM for Task {
     fn _update_status(&mut self, status: Status) {

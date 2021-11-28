@@ -1,6 +1,6 @@
 use std::time::SystemTime;
 
-use super::item::{Starrable, Taggable};
+use super::item::{Manageable, Starrable, Taggable};
 
 
 #[derive(Debug)]
@@ -24,6 +24,35 @@ impl Note {
             is_starred,
             tags,
         }
+    }
+}
+
+impl Manageable for Note {
+    /* Getters */
+    fn id(&self) -> u64 {
+        self.id.clone()
+    }
+
+    fn title(&self) -> String {
+        self.title.clone()
+    }
+
+    fn description(&self) -> String {
+        self.description.clone()
+    }
+
+    fn created_at(&self) -> SystemTime {
+        self.created_at.clone()
+    }
+
+    /* Setters */
+
+    fn set_title(&mut self, title: String) {
+        self.title = title
+    }
+
+    fn set_description(&mut self, description: String) {
+        self.description = description;
     }
 }
 
