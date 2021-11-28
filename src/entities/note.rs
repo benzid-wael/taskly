@@ -5,12 +5,14 @@ use super::item::{Manageable, Starrable, Taggable};
 
 #[derive(Debug)]
 pub struct Note {
+    /* Common Item fields */
     id: u64,
     title: String,
     description: String,
     created_at: SystemTime,
     is_starred: bool,
     tags: Vec<String>,
+    /* Custom Note fields */
 }
 
 

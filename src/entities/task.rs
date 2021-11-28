@@ -15,6 +15,8 @@ pub enum Status {
 
 
 pub trait FSM {
+    fn status(&self) -> Status;
+
     fn _update_status(&mut self, status: Status);
 
     fn start_task(&mut self) {
@@ -37,13 +39,15 @@ pub trait FSM {
 
 #[derive(Debug)]
 pub struct Task {
+    /* Common Item fields */
     id: u64,
     title: String,
     description: String,
-    status: Status,
     created_at: SystemTime,
     is_starred: bool,
     tags: Vec<String>,
+    /* Custom Task fields */
+    status: Status,
 }
 
 
@@ -114,6 +118,10 @@ impl Taggable for Task {
 }
 
 impl FSM for Task {
+    fn status(&self) -> Status {
+        self.status.clone()
+    }
+
     fn _update_status(&mut self, status: Status) {
         self.status = status;
     }
