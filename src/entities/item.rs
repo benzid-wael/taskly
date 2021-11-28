@@ -1,7 +1,9 @@
 use std::time::SystemTime;
 
+pub type EID = u16;
+
 pub trait Manageable {
-    fn id(&self) -> u64;
+    fn id(&self) -> EID;
     fn title(&self) -> String;
     fn set_title(&mut self, title: String);
     fn description(&self) -> String;

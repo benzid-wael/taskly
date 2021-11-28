@@ -1,6 +1,6 @@
 use std::time::SystemTime;
 
-use super::item::{Manageable, Starrable, Taggable};
+use super::item::{EID, Manageable, Starrable, Taggable};
 
 
 #[derive(Clone)]
@@ -40,7 +40,7 @@ pub trait FSM {
 #[derive(Debug)]
 pub struct Task {
     /* Common Item fields */
-    id: u64,
+    id: EID,
     title: String,
     description: String,
     created_at: SystemTime,
@@ -52,7 +52,7 @@ pub struct Task {
 
 
 impl Task {
-    pub fn new(id: u64, title: String, description: String, status: Status, is_starred: bool, tags: Vec<String>) -> Task {
+    pub fn new(id: EID, title: String, description: String, status: Status, is_starred: bool, tags: Vec<String>) -> Task {
         Task {
             id,
             title,
@@ -68,7 +68,7 @@ impl Task {
 
 impl Manageable for Task {
     /* Getters */
-    fn id(&self) -> u64 {
+    fn id(&self) -> EID {
         self.id.clone()
     }
 

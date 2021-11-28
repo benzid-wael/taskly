@@ -1,12 +1,12 @@
 use std::time::SystemTime;
 
-use super::item::{Manageable, Starrable, Taggable};
+use super::item::{EID, Manageable, Starrable, Taggable};
 
 
 #[derive(Debug)]
 pub struct Note {
     /* Common Item fields */
-    id: u64,
+    id: EID,
     title: String,
     description: String,
     created_at: SystemTime,
@@ -17,7 +17,7 @@ pub struct Note {
 
 
 impl Note {
-    pub fn new(id: u64, title: String, description: String, is_starred: bool, tags: Vec<String>) -> Note {
+    pub fn new(id: EID, title: String, description: String, is_starred: bool, tags: Vec<String>) -> Note {
         Note {
             id,
             title,
@@ -31,7 +31,7 @@ impl Note {
 
 impl Manageable for Note {
     /* Getters */
-    fn id(&self) -> u64 {
+    fn id(&self) -> EID {
         self.id.clone()
     }
 
