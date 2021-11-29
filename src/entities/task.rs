@@ -1,8 +1,48 @@
+use std::fmt;
 use std::time::SystemTime;
+use std::error::Error;
 
 use super::item::{EID, Manageable, Starrable, Taggable};
 
 
+//// Errors
+#[derive(Debug, Clone)]
+pub enum FSMErrorKind {
+    UnallowedTransition,
+}
+
+#[derive(Debug, Clone)]
+pub struct FSMError {
+    pub message: String,
+    pub kind: FSMErrorKind,
+}
+
+impl FSMError {
+    fn new(message: String, kind: FSMErrorKind) -> FSMError {
+        FSMError {
+            message,
+            kind,
+        }
+    }
+}
+
+impl fmt::Display for FSMError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        let prefix = match self.kind {
+            FSMErrorKind::UnallowedTransition => "Unallowed transition",
+        };
+        write!(f, "{}: {}", prefix, self.message)
+    }
+}
+
+impl Error for FSMError {
+    fn description(&self) -> &str {
+        &self.message
+    }
+}
+
+
+//// Enums
 #[derive(Clone)]
 #[derive(Debug)]
 pub enum Status {
@@ -13,27 +53,35 @@ pub enum Status {
     Cancelled,
 }
 
+macro_rules! transition {
+    ( $method:ident, $enum_type:ty, $dest:ident, $($val:ident),+ ) => {
+        fn $method(&mut self) -> Result<(), FSMError> {
+            match self.status() {
+                $(
+                    <$enum_type>::$val => {
+                        self._update_status(<$enum_type>::$dest);
+                        return Ok(());
+                    }
+                )+
+                _ => {
+                    let message = format!("Cannot move task to `{:?}` state, current state: `{:?}`", self.status(), <$enum_type>::$dest);
+                    println!("[{}]: Unallowed transition: {:?} -> {:?}", stringify!{$method}, self.status(), <$enum_type>::$dest);
+                    return Err(FSMError::new(message, FSMErrorKind::UnallowedTransition));
+                }
+            }
+        }
+    };
+}
 
 pub trait FSM {
     fn status(&self) -> Status;
 
     fn _update_status(&mut self, status: Status);
 
-    fn start_task(&mut self) {
-        self._update_status(Status::InProgress);
-    }
-
-    fn stop_task(&mut self) {
-        self._update_status(Status::OnHold);
-    }
-
-    fn complete_task(&mut self) {
-        self._update_status(Status::Done);
-    }
-
-    fn cancel_task(&mut self) {
-        self._update_status(Status::Cancelled);
-    }
+    transition!{start, Status, InProgress, Todo, OnHold, Done, Cancelled}
+    transition!{stop, Status, OnHold, InProgress}
+    transition!{complete, Status, Done, Todo, InProgress, OnHold, Cancelled}
+    transition!{cancel, Status, Cancelled, Todo, InProgress, OnHold, Done}
 }
 
 
